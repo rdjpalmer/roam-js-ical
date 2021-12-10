@@ -17,11 +17,11 @@ function makeUrl() {
 
 async function getICal() {
   const res = await fetch(makeUrl());
-  const data = await res.json();
 
   if (ICAL_URL.includes("https://calendar.google.com/calendar/ical")) {
-    return data;
+    return await res.json();
   } else {
+    const data = await res.text();
     return ical.parseICS(data);
   }
 }
