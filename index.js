@@ -3,7 +3,7 @@ import * as roam from "./roam-utils";
 import * as dom from "./dom-utils";
 import * as pageTitle from "./page-title";
 
-if (ICAL_URL) {
+if (!ICAL_URL) {
   alert("Please add `var ICAL_URL = ...;` before running this script.");
 }
 
