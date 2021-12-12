@@ -29,30 +29,33 @@ async function getICal() {
 dom.setupTrigger(async () => {
   const data = await getICal();
   const todayPageTitle = pageTitle.getByDate(new Date());
+  let todayEventsBlock;
 
-  const todayEventsBlock = await roam.getOrCreateBlockOnPage(
-    todayPageTitle,
-    "[[Events]]"
-  );
+  const items = Object.values(data).filter((event) => {
+    if (event.type !== "VEVENT") return false;
+    const startDate = new Date(event.start);
+    return isToday(startDate);
+  });
 
-  const promises = Object.values(data)
-    .filter((event) => {
-      if (event.type !== "VEVENT") return false;
-      const startDate = new Date(event.start);
-      return isToday(startDate);
-    })
-    .map(async (event, i) => {
-      const titleBlockId = await roam.getOrCreateChildBlock(
-        todayEventsBlock,
-        makeTitle(event),
-        i
-      );
+  if (items.length) {
+    todayEventsBlock = await roam.getOrCreateBlockOnPage(
+      todayPageTitle,
+      "[[Events]]"
+    );
+  }
 
-      return Promise.all([
-        insertDescription(titleBlockId, event),
-        insertAttendees(titleBlockId, event),
-      ]);
-    });
+  const promises = items.map(async (event, i) => {
+    const titleBlockId = await roam.getOrCreateChildBlock(
+      todayEventsBlock,
+      makeTitle(event),
+      i
+    );
+
+    return Promise.all([
+      insertDescription(titleBlockId, event),
+      insertAttendees(titleBlockId, event),
+    ]);
+  });
 
   await Promise.all(promises);
 });
