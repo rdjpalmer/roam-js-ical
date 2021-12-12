@@ -42,6 +42,8 @@ dom.setupTrigger(async () => {
       todayPageTitle,
       "[[Events]]"
     );
+  } else {
+    alert("Roam/JS iCal: No events to sync today");
   }
 
   const promises = items.map(async (event, i) => {
@@ -88,7 +90,7 @@ function insertDescription(titleBlock, event) {
 }
 
 async function insertAttendees(titleBlock, event) {
-  const attendees = event.attendee.filter(
+  const attendees = (event.attendee || []).filter(
     (attendee) => attendee.val !== event.organizer.val
   );
 
