@@ -7,9 +7,14 @@ if (!ICAL_URL) {
   alert("Please add `var ICAL_URL = ...;` before running this script.");
 }
 
+let PROXY_URL =
+  typeof PROXY_OVERRIDE_URL === "string"
+    ? PROXY_OVERRIDE_URL
+    : "https://gcal-cors-proxy.vercel.app";
+
 function makeUrl() {
   if (ICAL_URL.includes("https://calendar.google.com/calendar/ical")) {
-    return `https://gcal-cors-proxy.vercel.app/api/calendar?url=${ICAL_URL}`;
+    return `${PROXY_URL}/api/calendar?url=${ICAL_URL}`;
   } else {
     return ICAL_URL;
   }
